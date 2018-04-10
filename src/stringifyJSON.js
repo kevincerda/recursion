@@ -1,3 +1,4 @@
+
 var stringifyJSON = function(obj) {
   console.log(obj);
 
@@ -42,6 +43,7 @@ var stringifyJSON = function(obj) {
     });
     return '{' + objString.join(',') + '}';
   }
+};
  
 
  // this is what you would do if you liked things to be easy:
@@ -82,7 +84,7 @@ PLAN B */
 
 //Recursive case: an otherwise infinite function loop, that is stopped once the Base Case Condition === true.
  //Recursive Function Call: 'tooString' Unless all itmes === 'string'
- 
+
  // VERSION 1 OBJECT TEST:
     // let string = [];
     // _.each(obj, function(val, key, obj) {
