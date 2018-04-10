@@ -1,56 +1,96 @@
-// this is what you would do if you liked things to be easy:
+var stringifyJSON = function(obj) {
+  console.log(obj);
+
+  if (obj === null) {
+    return 'null';
+  }
+  if (obj === undefined) {
+    return null;
+  }
+  if (!Array.isArray(obj) && typeof obj === 'object' && _.isEmpty(obj)) {
+    return '{}';
+  }
+
+  if (typeof obj === 'number' || typeof obj === 'boolean') {
+    return obj.toString();
+  }
+
+  if (typeof obj === 'string') {
+    return '"' + obj.toString() + '"';
+  }
+
+  //for Arrays
+  if (Array.isArray(obj)) {
+    var stringMap = _.map(obj, function(i) {
+      return stringifyJSON(i);
+    });
+    return '[' + stringMap + ']';
+  }
+  //for Objects
+  if (_.isObject(obj)) {
+    //In this case it is seeing 'obj' as null, so the length can't be calculated.
+    for (var key in obj) {
+      if (typeof obj[key] === 'function' || typeof obj[key] === 'undefined') {
+        return '{}';
+      }
+    }
+
+    var objString = _.map(obj, function(val, key) {
+      if (typeof val !== 'function' || typeof val !== 'undefined') {
+        return stringifyJSON(key) + ':' + stringifyJSON(val);
+      } else return stringifyJSON(key) + ':' + val;
+    });
+    return '{' + objString.join(',') + '}';
+  }
+ 
+
+ // this is what you would do if you liked things to be easy:
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
 
 // {a: 1, b: 2} return "{a: 1, b: 2}"
 
+ // var allKeys = Object.keys(obj).length; - used to test for empty obj
+/* PLAN B
 var stringifyJSON = function(obj) {
-  console.log(obj);
- var allKeys = Object.keys(obj).length;
-  var tooString = function(val) {
-    let babyString = "'" + val + "'";
-    let parentString = babyString.replace(/\//g, '');
-    return parentString;
-  };
+  //console.log(obj);
 
-  if (obj === null) {
-    return 'null';
-  } 
-
-  if (typeof obj === 'number' || typeof obj === 'boolean') {
-    return obj.toString();
-  } 
-
-  if (typeof obj === 'string') {
-    return '"' + obj.toString() + '"';
-  } 
-
-  if ((typeof obj === 'object') && (!Array.isArray(obj)) && (allKeys > 0)) { //In this case it is seeing 'obj' as null, so the length can't be calculated. 
-    let string = [];
-    _.each(obj, function(val, key) {
-      if (typeof val !== 'boolean' && val !== null) {
-        return string.push('"' + key + '"' + ':' + '"' + val + '"');
-      } else if (Array.isArray(val)) {
-        return stringifyJSON(val);
-      } else if ((typeof(val) === 'object') && (!Array.isArray(val)) && (val !== null)) {
-        return stringifyJSON(key);
-      } else 
-    return '{' + string.join(',') + '}';
-    });
-  } 
-
-  if (Array.isArray(obj)) {
-    var stringMap = _.map(obj, function(i) {
-      if (typeof i === 'number') {
-        return i.toString();
-      } else if (Array.isArray(i)) {
-        return stringifyJSON(i);
-      } else return '"' + i.toString() + '"';
-    });
-    return '[' + stringMap + ']';
-  }
+//base case: 
+if (_.each(obj, function(i){ typeof i === 'string'; })) {
+  return obj;
 };
+
+//recursive function:
+var tooString = function(val) { 
+      let child = "'" + val + "'";
+      let parent = child.replace(/\//g, '');
+    return parent
+ }
+
+//recursive function call:
+var strungOut =  _.map(obj, function(values) {
+  tooString(values);
+ });
+return strungOut
+}
+PLAN B */ 
+
+//Base case: Everything has been stringified (i.e. tooString has been run as deeply as possible.);
+  //Base condition: _.each(i) // _.every(); console.log(typeof[i]) would return 'string'
+     //Base code: if (_.every(obj, function(i){ typeof i === 'string' }))
+
+//Recursive case: an otherwise infinite function loop, that is stopped once the Base Case Condition === true.
+ //Recursive Function Call: 'tooString' Unless all itmes === 'string'
+ 
+ // VERSION 1 OBJECT TEST:
+    // let string = [];
+    // _.each(obj, function(val, key, obj) {
+    //   if ((typeof val !== 'function' ) && (typeof val !== 'undefined')) {
+    //     return string.push('"' + stringifyJSON(key) + '"' + ':' + '"' + stringifyJSON(val) + '"');
+    //    } 
+    //   return '{' + string.join(',') + '}';
+    // });
 
 
   // console.log(obj);
